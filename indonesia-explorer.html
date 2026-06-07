@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nusantara Explorer — Jelajahi Keajaiban Indonesia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --emerald: #1A6B4A;
+    --emerald-light: #2E9E70;
+    --ocean: #0D4F6B;
+    --ocean-light: #1A7DA0;
+    --deep: #0A0E1A;
+    --surface: #111827;
+    --surface2: #1C2537;
+    --text: #F0EDE6;
+    --text-muted: #9CA3AF;
+    --coral: #E05C3A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease-out, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.5;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 20px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(10,14,26,0.98) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    padding: 9px 24px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+  .nav-cta:hover {
+    background: var(--gold);
+    color: var(--deep);
+  }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse at 70% 30%, rgba(26,107,74,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 70%, rgba(13,79,107,0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%),
+      linear-gradient(135deg, #080c18 0%, #0a1220 50%, #081018 100%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: 
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 0 20px;
+  }
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-title .line1 { display: block; color: var(--text); }
+  .hero-title .line2 {
+    display: block;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--gold-light);
+    letter-spacing: 0.05em;
+  }
+  .hero-sub {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+    color: var(--text-muted);
+    margin: 20px 0 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+  .hero-btns {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+  .btn-primary {
+    padding: 16px 44px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--deep);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    text-decoration: none;
+    border: none;
+    cursor: none;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%) skewX(-15deg);
+    transition: transform 0.4s;
+  }
+  .btn-primary:hover::before { transform: translateX(120%) skewX(-15deg); }
+  .btn-outline {
+    padding: 16px 44px;
+    border: 1px solid rgba(201,168,76,0.5);
+    color: var(--gold-light);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    text-decoration: none;
+    cursor: none;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  .scroll-indicator {
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+  }
+  .scroll-indicator span {
+    font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 1.8s infinite;
+  }
+
+  /* STATS STRIP */
+  .stats {
+    background: var(--surface);
+    padding: 40px 60px;
+    display: flex; justify-content: center; gap: 80px; flex-wrap: wrap;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem; font-weight: 700;
+    color: var(--gold); display: block;
+  }
+  .stat-label {
+    font-size: 0.75rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-muted); margin-top: 4px;
+  }
+
+  /* SECTIONS */
+  section { padding: 100px 60px; }
+  .section-header {
+    text-align: center; margin-bottom: 70px;
+  }
+  .section-tag {
+    font-size: 0.7rem; letter-spacing: 0.35em;
+    text-transform: uppercase; color: var(--gold);
+    display: block; margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+  }
+  .section-title em { color: var(--gold); font-style: italic; }
+  .section-desc {
+    color: var(--text-muted); max-width: 560px;
+    margin: 20px auto 0; line-height: 1.8;
+    font-size: 0.95rem;
+  }
+
+  /* HIDDEN GEM SECTION */
+  .hidden-gem { background: var(--surface); }
+  .gem-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3px; max-width: 1100px; margin: 0 auto;
+  }
+  .gem-card {
+    position: relative; overflow: hidden;
+    background: var(--surface2);
+    padding: 56px 48px;
+    transition: all 0.4s;
+    cursor: none;
+  }
+  .gem-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 0;
+    background: linear-gradient(to bottom, var(--gold), var(--emerald-light));
+    transition: height 0.5s;
+  }
+  .gem-card:hover::before { height: 100%; }
+  .gem-card:hover { background: rgba(28,37,55,0.9); }
+  .gem-icon {
+    font-size: 2.5rem; margin-bottom: 24px;
+    display: block;
+  }
+  .gem-label {
+    font-size: 0.65rem; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 12px; display: block;
+  }
+  .gem-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 700;
+    margin-bottom: 18px; line-height: 1.3;
+  }
+  .gem-desc {
+    color: var(--text-muted); line-height: 1.8; font-size: 0.9rem;
+  }
+  .gem-badge {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 6px 16px;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold-light);
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* REKOMENDASI */
+  .rekomendasi { background: var(--deep); }
+  .dest-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .dest-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.05);
+    overflow: hidden;
+    transition: all 0.4s;
+    cursor: none;
+    position: relative;
+  }
+  .dest-card:hover { transform: translateY(-6px); border-color: rgba(201,168,76,0.3); }
+  .dest-thumb {
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+  }
+  .dest-thumb-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.5s;
+  }
+  .dest-card:hover .dest-thumb-bg { transform: scale(1.08); }
+  .dest-thumb span { position: relative; z-index: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+  .dest-body { padding: 28px 28px 32px; }
+  .dest-region {
+    font-size: 0.65rem; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 10px; display: block;
+  }
+  .dest-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem; font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .dest-desc {
+    color: var(--text-muted); font-size: 0.85rem;
+    line-height: 1.75; margin-bottom: 20px;
+  }
+  .dest-tags {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .dest-tag {
+    padding: 4px 12px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    font-size: 0.68rem; letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* HIBURAN */
+  .hiburan { background: var(--surface); }
+  .hiburan-list {
+    max-width: 1000px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .hiburan-item {
+    display: grid; grid-template-columns: 80px 1fr auto;
+    align-items: center; gap: 32px;
+    padding: 32px 40px;
+    background: var(--deep);
+    border-left: 3px solid transparent;
+    transition: all 0.35s;
+    cursor: none;
+  }
+  .hiburan-item:hover {
+    background: var(--surface2);
+    border-left-color: var(--gold);
+    padding-left: 52px;
+  }
+  .hiburan-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 900;
+    color: rgba(201,168,76,0.2);
+    transition: color 0.35s;
+    text-align: center;
+  }
+  .hiburan-item:hover .hiburan-num { color: var(--gold); }
+  .hiburan-info {}
+  .hiburan-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .hiburan-loc {
+    font-size: 0.75rem; color: var(--gold);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .hiburan-desc { color: var(--text-muted); font-size: 0.87rem; line-height: 1.7; }
+  .hiburan-emoji { font-size: 2rem; }
+
+  /* TIPS PERJALANAN */
+  .tips { background: var(--deep); }
+  .tips-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px; max-width: 1200px; margin: 0 auto;
+  }
+  .tip-card {
+    padding: 40px 32px;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.04);
+    text-align: center;
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .tip-card:hover { background: var(--surface2); transform: translateY(-4px); }
+  .tip-icon { font-size: 2rem; margin-bottom: 20px; display: block; }
+  .tip-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .tip-text { color: var(--text-muted); font-size: 0.84rem; line-height: 1.75; }
+
+  /* GALERI MOOD */
+  .galeri { background: var(--surface); }
+  .mood-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 240px 240px;
+    gap: 3px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .mood-item {
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+    padding: 24px;
+    cursor: none;
+  }
+  .mood-item:first-child { grid-row: 1 / 3; }
+  .mood-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.5s;
+  }
+  .mood-item:hover .mood-bg { transform: scale(1.07); }
+  .mood-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+  }
+  .mood-text {
+    position: relative; z-index: 1;
+  }
+  .mood-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .mood-text p { font-size: 0.75rem; color: rgba(255,255,255,0.65); }
+
+  /* NEWSLETTER */
+  .newsletter {
+    padding: 100px 60px;
+    background: linear-gradient(135deg, rgba(26,107,74,0.2), rgba(13,79,107,0.2));
+    border-top: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    text-align: center;
+  }
+  .newsletter h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700; margin-bottom: 16px;
+  }
+  .newsletter p { color: var(--text-muted); margin-bottom: 40px; font-size: 0.95rem; }
+  .nl-form {
+    display: flex; gap: 0; max-width: 500px; margin: 0 auto;
+  }
+  .nl-input {
+    flex: 1;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-right: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .nl-input::placeholder { color: var(--text-muted); }
+  .nl-input:focus { border-color: var(--gold); }
+  .nl-btn {
+    padding: 16px 32px;
+    background: var(--gold);
+    color: var(--deep);
+    border: none;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    cursor: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .nl-btn:hover { background: var(--gold-light); }
+
+  /* FOOTER */
+  footer {
+    background: rgba(0,0,0,0.6);
+    padding: 60px;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .footer-brand .nav-logo { font-size: 1.3rem; display: block; margin-bottom: 16px; }
+  .footer-brand p { color: var(--text-muted); font-size: 0.85rem; line-height: 1.8; }
+  .footer-col h4 {
+    font-size: 0.7rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 0.87rem; transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--text); }
+  .footer-bottom {
+    padding: 20px 60px;
+    background: rgba(0,0,0,0.8);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom p { color: var(--text-muted); font-size: 0.78rem; }
+
+  /* SEARCH BAR */
+  .search-section {
+    background: var(--deep);
+    padding: 0 60px;
+    margin-top: -1px;
+  }
+  .search-container {
+    max-width: 800px; margin: 0 auto;
+    padding: 50px 0;
+    text-align: center;
+  }
+  .search-label {
+    font-size: 0.7rem; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--gold);
+    display: block; margin-bottom: 20px;
+  }
+  .search-box {
+    display: flex; gap: 0;
+    border: 1px solid rgba(201,168,76,0.3);
+    transition: border-color 0.3s;
+  }
+  .search-box:focus-within { border-color: var(--gold); }
+  .search-input {
+    flex: 1; padding: 18px 28px;
+    background: rgba(255,255,255,0.04);
+    border: none; outline: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-btn {
+    padding: 18px 36px;
+    background: var(--gold);
+    color: var(--deep); border: none;
+    font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; font-size: 0.8rem;
+    cursor: none; font-family: 'DM Sans', sans-serif;
+    transition: background 0.3s;
+  }
+  .search-btn:hover { background: var(--gold-light); }
+  .search-tags {
+    display: flex; gap: 10px; justify-content: center;
+    flex-wrap: wrap; margin-top: 20px;
+  }
+  .search-tag {
+    padding: 6px 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-muted); font-size: 0.78rem;
+    cursor: none; transition: all 0.2s;
+  }
+  .search-tag:hover { border-color: var(--gold); color: var(--gold-light); }
+
+  /* FILTER TABS */
+  .filter-tabs {
+    display: flex; gap: 4px; justify-content: center;
+    margin-bottom: 48px; flex-wrap: wrap;
+  }
+  .filter-tab {
+    padding: 10px 28px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    font-size: 0.78rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: none; font-family: 'DM Sans', sans-serif;
+    transition: all 0.25s;
+  }
+  .filter-tab.active, .filter-tab:hover {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--deep);
+    font-weight: 700;
+  }
+
+  /* FLOATING BADGE */
+  .floating-badge {
+    position: fixed;
+    bottom: 40px; right: 40px;
+    z-index: 100;
+    background: var(--gold);
+    color: var(--deep);
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 8px 32px rgba(201,168,76,0.4);
+    cursor: none;
+    animation: float 3s ease-in-out infinite;
+    transition: transform 0.3s;
+  }
+  .floating-badge:hover { transform: scale(1.1); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 0.7; }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* COLOR THEMES PER THUMB */
+  .bg-raja { background: linear-gradient(135deg, #0a3d5c, #1a6b4a, #0d4f6b); }
+  .bg-komodo { background: linear-gradient(135deg, #3d1a0a, #6b3a1a, #4d2a08); }
+  .bg-bromo { background: linear-gradient(135deg, #1a0a3d, #3d1a6b, #0d0a4f); }
+  .bg-ijen { background: linear-gradient(135deg, #001a2e, #0d3d5c, #002038); }
+  .bg-mentawai { background: linear-gradient(135deg, #0a2e1a, #1a5c3d, #0a3d20); }
+  .bg-waykambas { background: linear-gradient(135deg, #1a2e0a, #3d5c1a, #203d0a); }
+
+  .bg-m1 { background: linear-gradient(135deg, #1a3d0a, #2e6b1a, #1a4a0a); }
+  .bg-m2 { background: linear-gradient(135deg, #0a1a3d, #1a2e6b, #0a1a4a); }
+  .bg-m3 { background: linear-gradient(135deg, #3d0a1a, #6b1a2e, #4a0a1a); }
+  .bg-m4 { background: linear-gradient(135deg, #0a3d3d, #1a6b6b, #0a4a4a); }
+  .bg-m5 { background: linear-gradient(135deg, #3d3d0a, #6b6b1a, #4a4a0a); }
+
+  /* MOBILE */
+  @media(max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 70px 24px; }
+    .stats { padding: 30px 24px; gap: 40px; }
+    .gem-grid { grid-template-columns: 1fr; }
+    .dest-grid { grid-template-columns: 1fr; }
+    .tips-grid { grid-template-columns: 1fr 1fr; }
+    footer { grid-template-columns: 1fr; gap: 40px; padding: 40px 24px; }
+    .footer-bottom { padding: 16px 24px; flex-direction: column; gap: 8px; }
+    .mood-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .mood-item:first-child { grid-row: auto; min-height: 240px; }
+    .hiburan-item { grid-template-columns: 50px 1fr auto; gap: 16px; padding: 24px 20px; }
+    .search-section { padding: 0 24px; }
+    .nl-form { flex-direction: column; }
+    .nl-input { border-right: 1px solid rgba(201,168,76,0.3); border-bottom: none; }
+    .newsletter { padding: 70px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- FLOATING BADGE -->
+<div class="floating-badge" onclick="document.getElementById('explore').scrollIntoView({behavior:'smooth'})">🗺️</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">NUSANTARA<span>EXPLORER</span></a>
+  <ul class="nav-links">
+    <li><a href="#gem">Hidden Gem</a></li>
+    <li><a href="#rekomendasi">Destinasi</a></li>
+    <li><a href="#hiburan">Hiburan</a></li>
+    <li><a href="#tips">Tips</a></li>
+    <li><a href="#galeri">Galeri</a></li>
+  </ul>
+  <a href="#newsletter" class="nav-cta">Newsletter</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">✦ Jelajahi Keajaiban Nusantara ✦</p>
+    <h1 class="hero-title">
+      <span class="line1">SURGA</span>
+      <span class="line2">INDONESIA</span>
+    </h1>
+    <p class="hero-sub">17.000 pulau, satu jiwa yang sama</p>
+    <div class="hero-btns">
+      <a href="#explore" class="btn-primary">Mulai Jelajahi</a>
+      <a href="#gem" class="btn-outline">Temukan Hidden Gem</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Gulir</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item"><span class="stat-num">17.000+</span><span class="stat-label">Pulau</span></div>
+  <div class="stat-item"><span class="stat-num">300+</span><span class="stat-label">Suku Bangsa</span></div>
+  <div class="stat-item"><span class="stat-num">50+</span><span class="stat-label">Taman Nasional</span></div>
+  <div class="stat-item"><span class="stat-num">6</span><span class="stat-label">Situs Warisan Dunia</span></div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-section" id="explore">
+  <div class="search-container">
+    <span class="search-label">✦ Cari Destinasi Impianmu ✦</span>
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="Raja Ampat, Bali, Bromo..." id="searchInput">
+      <button class="search-btn" onclick="doSearch()">Cari →</button>
+    </div>
+    <div class="search-tags">
+      <button class="search-tag" onclick="setSearch('Pantai')">🏖️ Pantai</button>
+      <button class="search-tag" onclick="setSearch('Gunung')">🏔️ Gunung</button>
+      <button class="search-tag" onclick="setSearch('Diving')">🤿 Diving</button>
+      <button class="search-tag" onclick="setSearch('Budaya')">🎭 Budaya</button>
+      <button class="search-tag" onclick="setSearch('Hutan')">🌿 Hutan</button>
+      <button class="search-tag" onclick="setSearch('Satwa')">🦁 Satwa</button>
+    </div>
+  </div>
+</div>
+
+<!-- HIDDEN GEM -->
+<section class="hidden-gem" id="gem">
+  <div class="section-header reveal">
+    <span class="section-tag">✦ Terpendam ✦</span>
+    <h2 class="section-title">Hidden <em>Gem</em></h2>
+    <p class="section-desc">Destinasi-destinasi tersembunyi yang belum banyak terjamah — keajaiban alam yang menunggu untuk ditemukan.</p>
+  </div>
+  <div class="gem-grid">
+    <div class="gem-card reveal">
+      <span class="gem-icon">💧</span>
+      <span class="gem-label">✦ Air Terjun Tersembunyi</span>
+      <h3 class="gem-name">Air Terjun Mata Jitu</h3>
+      <p class="gem-desc">Air terjun bertingkat dengan kolam alami berwarna hijau toska yang super jernih. Tempat ini terkenal sangat tenang dan asri, sering disebut kolam renang alami para bidadari.</p>
+      <span class="gem-badge">Nusa Tenggara</span>
+    </div>
+    <div class="gem-card reveal" style="transition-delay: 0.15s">
+      <span class="gem-icon">🤿</span>
+      <span class="gem-label">✦ Surga Bawah Laut</span>
+      <h3 class="gem-name">Pulau Alor</h3>
+      <p class="gem-desc">Destinasi diving yang belum banyak terjamah. Terumbu karang masih asri dan kehidupan bawah laut yang beragam — sering disebut "Raja Ampat-nya NTT". Budaya tradisional suku Alor yang unik juga patut dijelajahi.</p>
+      <span class="gem-badge">NTT · Raja Ampat-nya Timur</span>
+    </div>
+  </div>
+</section>
+
+<!-- REKOMENDASI -->
+<section class="rekomendasi" id="rekomendasi">
+  <div class="section-header reveal">
+    <span class="section-tag">✦ Terbaik ✦</span>
+    <h2 class="section-title">Rekomendasi <em>Destinasi</em></h2>
+    <p class="section-desc">Dari sabang sampai merauke — pilih destinasi yang sesuai selera dan bujet perjalananmu.</p>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterDest(this, 'all')">Semua</button>
+    <button class="filter-tab" onclick="filterDest(this, 'timur')">Indonesia Timur</button>
+    <button class="filter-tab" onclick="filterDest(this, 'jawa')">Jawa</button>
+    <button class="filter-tab" onclick="filterDest(this, 'sumatera')">Sumatera</button>
+  </div>
+
+  <div class="dest-grid" id="destGrid">
+    <div class="dest-card reveal" data-cat="timur">
+      <div class="dest-thumb">
+        <div class="dest-thumb-bg bg-raja"></div>
+        <span>🏝️</span>
+      </div>
+      <div class="dest-body">
+        <span class="dest-region">Papua Barat</span>
+        <h3 class="dest-name">Raja Ampat</h3>
+        <p class="dest-desc">Surga biodiversitas laut dunia. Keindahan alam yang masih permai dengan fasilitas wisata yang semakin lengkap dan nyaman.</p>
+        <div class="dest-tags">
+          <span class="dest-tag">Diving</span>
+          <span class="dest-tag">Snorkeling</span>
+          <span class="dest-tag">Premium</span>
+        </div>
+      </div>
+    </div>
+    <div class="dest-card reveal" data-cat="timur" style="transition-delay:0.1s">
+      <div class="dest-thumb">
+        <div class="dest-thumb-bg bg-komodo"></div>
+        <span>🦎</span>
+      </div>
+      <div class="dest-body">
+        <span class="dest-region">Nusa Tenggara Timur</span>
+        <h3 class="dest-name">Pulau Komodo</h3>
+        <p class="dest-desc">Rumah bagi lebih dari 2.000 ekor komodo — hewan endemik Indonesia yang telah dikenal dunia. Warisan alam UNESCO yang tak tertandingi.</p>
+        <div class="dest-tags">
+          <span class="dest-tag">Satwa</span>
+          <span class="dest-tag">UNESCO</span>
+          <span class="dest-tag">Hiking</span>
+        </div>
+      </div>
+    </div>
+    <div class="dest-card reveal" data-cat="jawa" style="transition-delay:0.2s">
+      <div class="dest-thumb">
+        <div class="dest-thumb-bg bg-bromo"></div>
+        <span>🌋</span>
+      </div>
+      <div class="dest-body">
+        <span class="dest-region">Jawa Timur</span>
+        <h3 class="dest-name">Gunung Bromo</h3>
+        <p class="dest-desc">Gunung berapi aktif paling populer di Indonesia. Pemandangan matahari terbit di atas lautan awan adalah pengalaman yang tak terlupakan.</p>
+        <div class="dest-tags">
+          <span class="dest-tag">Gunung</span>
+          <span class="dest-tag">Sunrise</span>
+          <span class="dest-tag">Petualangan</span>
+        </div>
+      </div>
+    </div>
+    <div class="dest-card reveal" data-cat="jawa" style="transition-delay:0.3s">
+      <div class="dest-thumb">
+        <div class="dest-thumb-bg bg-ijen"></div>
+        <span>🔵</span>
+      </div>
+      <div class="dest-body">
+        <span class="dest-region">Jawa Timur · 2.368 mdpl</span>
+        <h3 class="dest-name">Kawah Ijen</h3>
+        <p class="dest-desc">Fenomena api biru langka di dunia. Tengah malam sebelum fajar adalah waktu terbaik menyaksikan eksotisme api kebiruan yang memukau dari kawahnya.</p>
+        <div class="dest-tags">
+          <span class="dest-tag">Api Biru</span>
+          <span class="dest-tag">Langka</span>
+          <span class="dest-tag">Malam</span>
+        </div>
+      </div>
+    </div>
+    <div class="dest-card reveal" data-cat="sumatera" style="transition-delay:0.4s">
+      <div class="dest-thumb">
+        <div class="dest-thumb-bg bg-mentawai"></div>
+        <span>🏄</span>
+      </div>
+      <div class="dest-body">
+        <span class="dest-region">Sumatera Barat</span>
+        <h3 class="dest-name">Kepulauan Mentawai</h3>
+        <p class="dest-desc">Destinasi surfing kelas dunia. Setiap tahun ribuan peselancar dari berbagai penjuru dunia datang menaklukkan ombak terbaik di kepulauan ini.</p>
+        <div class="dest-tags">
+          <span class="dest-tag">Surfing</span>
+          <span class="dest-tag">Pantai</span>
+          <span class="dest-tag">World-class</span>
+        </div>
+      </div>
+    </div>
+    <div class="dest-card reveal" data-cat="sumatera" style="transition-delay:0.5s">
+      <div class="dest-thumb">
+        <div class="dest-thumb-bg bg-waykambas"></div>
+        <span>🐘</span>
+      </div>
+      <div class="dest-body">
+        <span class="dest-region">Lampung</span>
+        <h3 class="dest-name">Taman Nasional Way Kambas</h3>
+        <p class="dest-desc">Taman nasional konservasi Gajah Sumatera yang semakin langka. Saksikan gajah-gajah megah di habitat aslinya yang terjaga.</p>
+        <div class="dest-tags">
+          <span class="dest-tag">Konservasi</span>
+          <span class="dest-tag">Gajah</span>
+          <span class="dest-tag">Edukasi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HIBURAN -->
+<section class="hiburan" id="hiburan">
+  <div class="section-header reveal">
+    <span class="section-tag">✦ Rekreasi ✦</span>
+    <h2 class="section-title">Koleksi <em>Hiburan</em></h2>
+    <p class="section-desc">Dari taman hiburan modern hingga pertunjukan budaya yang memukau — Indonesia menawarkan segalanya.</p>
+  </div>
+  <div class="hiburan-list">
+    <div class="hiburan-item reveal">
+      <div class="hiburan-num">01</div>
+      <div class="hiburan-info">
+        <h3 class="hiburan-name">Jawa Timur Park (Jatim Park)</h3>
+        <p class="hiburan-loc">📍 Kota Batu, Malang</p>
+        <p class="hiburan-desc">Kompleks taman hiburan dan edukasi terpadu yang lengkap. Pengalaman rekreasi keluarga yang memadukan wahana seru dengan pembelajaran.</p>
+      </div>
+      <div class="hiburan-emoji">🎡</div>
+    </div>
+    <div class="hiburan-item reveal" style="transition-delay:0.1s">
+      <div class="hiburan-num">02</div>
+      <div class="hiburan-info">
+        <h3 class="hiburan-name">Pertunjukan Tari Kecak</h3>
+        <p class="hiburan-loc">📍 Bali · Sunset Amphitheater</p>
+        <p class="hiburan-desc">Ikon budaya Bali — puluhan penari pria melantunkan irama "cak-cak-cak" tanpa alat musik, membawakan epik Ramayana berlatar matahari terbenam yang dramatis.</p>
+      </div>
+      <div class="hiburan-emoji">🎭</div>
+    </div>
+    <div class="hiburan-item reveal" style="transition-delay:0.2s">
+      <div class="hiburan-num">03</div>
+      <div class="hiburan-info">
+        <h3 class="hiburan-name">Taman Nasional Tanjung Puting</h3>
+        <p class="hiburan-loc">📍 Kalimantan Tengah</p>
+        <p class="hiburan-desc">Cagar alam eksklusif untuk konservasi Orang Utan di habitat aslinya. Jelajahi sungai tropis dan saksikan primata cerdas ini dari dekat.</p>
+      </div>
+      <div class="hiburan-emoji">🦧</div>
+    </div>
+    <div class="hiburan-item reveal" style="transition-delay:0.3s">
+      <div class="hiburan-num">04</div>
+      <div class="hiburan-info">
+        <h3 class="hiburan-name">Taman Wisata Alam Mangrove Angke Kapuk</h3>
+        <p class="hiburan-loc">📍 Jakarta</p>
+        <p class="hiburan-desc">Kawasan konservasi hutan mangrove di tengah hiruk pikuk ibu kota. Pelarian hijau yang menenangkan tanpa harus jauh dari kota.</p>
+      </div>
+      <div class="hiburan-emoji">🌿</div>
+    </div>
+    <div class="hiburan-item reveal" style="transition-delay:0.4s">
+      <div class="hiburan-num">05</div>
+      <div class="hiburan-info">
+        <h3 class="hiburan-name">Wana Griya Parung</h3>
+        <p class="hiburan-loc">📍 Bogor, Jawa Barat</p>
+        <p class="hiburan-desc">Alternatif rekreasi keluarga yang unik dengan danau buatan berpasir putih dan berbagai wahana seru. Pengalaman pantai tanpa harus ke pesisir.</p>
+      </div>
+      <div class="hiburan-emoji">🏖️</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIPS -->
+<section class="tips" id="tips">
+  <div class="section-header reveal">
+    <span class="section-tag">✦ Panduan ✦</span>
+    <h2 class="section-title">Tips <em>Perjalanan</em></h2>
+    <p class="section-desc">Persiapkan perjalananmu agar semakin berkesan dan bebas hambatan.</p>
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card reveal">
+      <span class="tip-icon">📅</span>
+      <h3 class="tip-title">Waktu Terbaik</h3>
+      <p class="tip-text">Kunjungi Indonesia pada musim kering (April–Oktober) untuk kondisi cuaca optimal. Bromo dan Ijen terbaik dikunjungi tengah malam.</p>
+    </div>
+    <div class="tip-card reveal" style="transition-delay:0.1s">
+      <span class="tip-icon">💰</span>
+      <h3 class="tip-title">Anggaran Cerdas</h3>
+      <p class="tip-text">Pesan tiket dan hotel minimal 2 bulan sebelum keberangkatan. Manfaatkan transportasi lokal untuk menghemat biaya perjalanan.</p>
+    </div>
+    <div class="tip-card reveal" style="transition-delay:0.2s">
+      <span class="tip-icon">🎒</span>
+      <h3 class="tip-title">Perlengkapan</h3>
+      <p class="tip-text">Bawa sunscreen, obat anti-nyamuk, dan perlengkapan snorkeling/diving pribadi untuk kenyamanan maksimal di alam terbuka.</p>
+    </div>
+    <div class="tip-card reveal" style="transition-delay:0.3s">
+      <span class="tip-icon">🌍</span>
+      <h3 class="tip-title">Wisata Bertanggung Jawab</h3>
+      <p class="tip-text">Hormati budaya lokal, jaga kebersihan alam, dan dukung usaha lokal. Jadilah wisatawan yang bertanggung jawab demi kelestarian Indonesia.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALERI MOOD -->
+<section class="galeri" id="galeri">
+  <div class="section-header reveal">
+    <span class="section-tag">✦ Visual ✦</span>
+    <h2 class="section-title">Mood <em>Nusantara</em></h2>
+  </div>
+  <div class="mood-grid">
+    <div class="mood-item reveal">
+      <div class="mood-bg" style="background: linear-gradient(135deg, #0a3d5c 0%, #1a6b4a 50%, #0d1a30 100%);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7rem;opacity:0.25;">🏝️</div>
+      </div>
+      <div class="mood-overlay"></div>
+      <div class="mood-text">
+        <h3>Surga Timur Indonesia</h3>
+        <p>Raja Ampat · Alor · Komodo</p>
+      </div>
+    </div>
+    <div class="mood-item reveal" style="transition-delay:0.1s">
+      <div class="mood-bg" style="background: linear-gradient(135deg, #1a0a3d, #3d1a6b);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;opacity:0.3;">🌋</div>
+      </div>
+      <div class="mood-overlay"></div>
+      <div class="mood-text">
+        <h3>Puncak Berapi</h3>
+        <p>Bromo · Ijen · Rinjani</p>
+      </div>
+    </div>
+    <div class="mood-item reveal" style="transition-delay:0.2s">
+      <div class="mood-bg" style="background: linear-gradient(135deg, #3d0a1a, #6b1a2e);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;opacity:0.3;">🎭</div>
+      </div>
+      <div class="mood-overlay"></div>
+      <div class="mood-text">
+        <h3>Budaya & Tradisi</h3>
+        <p>Bali · Alor · Yogyakarta</p>
+      </div>
+    </div>
+    <div class="mood-item reveal" style="transition-delay:0.15s">
+      <div class="mood-bg" style="background: linear-gradient(135deg, #0a2e1a, #1a5c3d);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;opacity:0.3;">🌿</div>
+      </div>
+      <div class="mood-overlay"></div>
+      <div class="mood-text">
+        <h3>Hutan & Satwa</h3>
+        <p>Tanjung Puting · Way Kambas</p>
+      </div>
+    </div>
+    <div class="mood-item reveal" style="transition-delay:0.25s">
+      <div class="mood-bg" style="background: linear-gradient(135deg, #0a1a3d, #1a2e6b);">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;opacity:0.3;">🏄</div>
+      </div>
+      <div class="mood-overlay"></div>
+      <div class="mood-text">
+        <h3>Ombak & Pantai</h3>
+        <p>Mentawai · Lombok</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter" id="newsletter">
+  <h2>Jangan Lewatkan <em style="color:var(--gold);font-style:italic;">Destinasi Baru</em></h2>
+  <p>Dapatkan rekomendasi wisata eksklusif, tips perjalanan, dan penawaran terbaik langsung di emailmu.</p>
+  <div class="nl-form">
+    <input type="email" class="nl-input" placeholder="emailmu@contoh.com" id="emailInput">
+    <button class="nl-btn" onclick="subscribe()">Berlangganan →</button>
+  </div>
+  <p id="subMsg" style="margin-top:16px;color:var(--gold);font-size:0.85rem;display:none;">✦ Terima kasih! Kamu telah bergabung.</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a href="#" class="nav-logo">NUSANTARA<span>EXPLORER</span></a>
+    <p>Platform eksplorasi destinasi wisata Indonesia yang paling lengkap. Temukan keajaiban Nusantara dari sabang sampai merauke.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Destinasi</h4>
+    <ul>
+      <li><a href="#rekomendasi">Raja Ampat</a></li>
+      <li><a href="#rekomendasi">Pulau Komodo</a></li>
+      <li><a href="#rekomendasi">Gunung Bromo</a></li>
+      <li><a href="#rekomendasi">Kawah Ijen</a></li>
+      <li><a href="#gem">Hidden Gem</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Hiburan</h4>
+    <ul>
+      <li><a href="#hiburan">Jatim Park</a></li>
+      <li><a href="#hiburan">Tari Kecak</a></li>
+      <li><a href="#hiburan">Tanjung Puting</a></li>
+      <li><a href="#hiburan">Mangrove Jakarta</a></li>
+      <li><a href="#hiburan">Wana Griya</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Panduan</h4>
+    <ul>
+      <li><a href="#tips">Tips Perjalanan</a></li>
+      <li><a href="#tips">Anggaran Wisata</a></li>
+      <li><a href="#tips">Waktu Terbaik</a></li>
+      <li><a href="#newsletter">Newsletter</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2025 Nusantara Explorer · Bangga Produk Indonesia 🇮🇩</p>
+  <p style="color:var(--gold);font-size:0.75rem;">✦ Jelajahi · Rasakan · Cintai ✦</p>
+</div>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.querySelectorAll('a,button,.gem-card,.dest-card,.hiburan-item,.tip-card,.mood-item,.search-tag,.filter-tab').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px'; cursor.style.height = '20px';
+      cursor.style.background = 'var(--gold-light)';
+      ring.style.width = '56px'; ring.style.height = '56px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px'; cursor.style.height = '12px';
+      cursor.style.background = 'var(--gold)';
+      ring.style.width = '36px'; ring.style.height = '36px';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Filter destinations
+  function filterDest(btn, cat) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.dest-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.style.display = '';
+        setTimeout(() => card.style.opacity = '1', 10);
+      } else {
+        card.style.opacity = '0';
+        setTimeout(() => card.style.display = 'none', 300);
+      }
+    });
+  }
+
+  // Search
+  function setSearch(val) { document.getElementById('searchInput').value = val; }
+  function doSearch() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    if (!q) return;
+    const map = {
+      'pantai': 'rekomendasi', 'gunung': 'rekomendasi',
+      'diving': 'gem', 'budaya': 'hiburan',
+      'hutan': 'hiburan', 'satwa': 'hiburan'
+    };
+    const target = map[q] || 'rekomendasi';
+    document.getElementById(target).scrollIntoView({ behavior: 'smooth' });
+  }
+  document.getElementById('searchInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  // Newsletter
+  function subscribe() {
+    const email = document.getElementById('emailInput').value;
+    if (email && email.includes('@')) {
+      document.getElementById('subMsg').style.display = 'block';
+      document.getElementById('emailInput').value = '';
+    }
+  }
+
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 80) {
+      nav.style.background = 'rgba(10,14,26,0.97)';
+    } else {
+      nav.style.background = 'linear-gradient(to bottom, rgba(10,14,26,0.98) 0%, transparent 100%)';
+    }
+  });
+</script>
+</body>
+</html>
